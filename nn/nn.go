@@ -1,24 +1,25 @@
 package nn
 
 import (
-  "fmt"
   "gonum.org/v1/gonum/mat"
   "gonum.org/v1/gonum/stat/distuv"
   "os"
+  "math"
+  "fmt"
 )
 
 // neural net
 type Network struct {
   inputs        int
-  hidden        int
+  hiddens        int
   outputs       int
   hiddenWeights *mat.Dense
   outputWeights *mat.Dense
   learningRate  float64
 }
 
-func CreateNetwork(input, hidden, output int, rate64) net Network{
-  net = Network {
+func CreateNetwork(input, hidden, output int, rate float64) Network{
+  net := Network {
     inputs:       input,
     hiddens:      hidden,
     outputs:      output,
@@ -26,6 +27,7 @@ func CreateNetwork(input, hidden, output int, rate64) net Network{
   }
   net.hiddenWeights = mat.NewDense(net.hiddens, net.inputs, randomArray(net.inputs*net.hiddens, float64(net.inputs)))
   net.outputWeights = mat.NewDense(net.outputs, net.hiddens, randomArray(net.hiddens*net.outputs, float64(net.hiddens)))
+  return net
 }
 
 func randomArray(size int, v float64) []float64 {
@@ -60,7 +62,7 @@ func (net *Network) Train(inputData []float64, targetData []float64) {
   finalOutputs := apply(sigmoid, finalInputs)
 
   // find errors
-  targers := mat.NewDense(len(targetData), 1, targetData)
+  targets := mat.NewDense(len(targetData), 1, targetData)
   outputErrors := subtract(targets, finalOutputs)
   hiddenErrors := dot(net.outputWeights.T(), outputErrors)
 
@@ -153,20 +155,26 @@ func sigmoidPrime(m mat.Matrix) mat.Matrix {
   return multiply(m, subtract(ones, m))
 }
 
-func save(net Network) {
+func Save(net Network) {
   h, err := os.Create("data/hweights.model")
   defer h.Close()
   if err == nil {
     net.hiddenWeights.MarshalBinaryTo(h)
+  } else {
+    fmt.Println(err)
   }
 
   o, err := os.Create("data/oweights.model")
   defer o.Close()
   if err == nil {
     net.outputWeights.MarshalBinaryTo(o)
+  } else {
+    fmt.Println(err)
   }
+  return
+}
 
-  func load(net *Network) {
+  func Load(net *Network) {
     h, err := os.Open("data/hweights.model")
     defer h.Close()
     if err == nil {
@@ -180,5 +188,8 @@ func save(net Network) {
       net.outputWeights.UnmarshalBinaryFrom(o)
     }
     return
-  }
+}
+func MatrixPrint(X mat.Matrix) {
+	fa := mat.Formatted(X, mat.Prefix(""), mat.Squeeze())
+	fmt.Printf("%v\n", fa)
 }
