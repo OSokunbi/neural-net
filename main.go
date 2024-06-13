@@ -5,6 +5,7 @@ import (
 )
 
 func main() {
+	// Greater number of hidden nodes will give you a more accurate model
 	net := nn.CreateNetwork(2, 5, 1, 0.5)
 	trainingData := [][][]float64{
 		{{0, 0}, {0}},

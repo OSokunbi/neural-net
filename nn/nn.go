@@ -18,6 +18,7 @@ type Network struct {
   learningRate  float64
 }
 
+// Create a neural network
 func CreateNetwork(input, hidden, output int, rate float64) Network{
   net := Network {
     inputs:       input,
@@ -53,6 +54,7 @@ func(net Network) Predict(inputData []float64) mat.Matrix {
   return finalOutputs
 }
 
+// To train the Neural Network
 func (net *Network) Train(inputData []float64, targetData []float64) {
   // forward propgation
   inputs := mat.NewDense(len(inputData), 1, inputData)
@@ -79,6 +81,7 @@ func (net *Network) Train(inputData []float64, targetData []float64) {
 }
 
 // A set of helper functions
+
 // dot product operation on two matrices
 func dot(m, n mat.Matrix) mat.Matrix {
   r, _ := m.Dims()
@@ -140,10 +143,12 @@ func addScalar(x float64, m mat.Matrix) mat.Matrix{
   return add(m, n)
 }
 
+// sigmoid function
 func sigmoid(r, c int, z float64) float64 {
 	return 1.0 / (1 + math.Exp(-1*z))
 }
 
+// sigmoid prime function
 func sigmoidPrime(m mat.Matrix) mat.Matrix {
   r, _ := m.Dims()
   o := make([]float64, r)
@@ -155,6 +160,7 @@ func sigmoidPrime(m mat.Matrix) mat.Matrix {
   return multiply(m, subtract(ones, m))
 }
 
+// Save the model
 func Save(net Network) {
   h, err := os.Create("data/hweights.model")
   defer h.Close()
@@ -174,8 +180,9 @@ func Save(net Network) {
   return
 }
 
-  func Load(net *Network) {
-    h, err := os.Open("data/hweights.model")
+// Load a pre-trained model
+func Load(net *Network) {
+	h, err := os.Open("data/hweights.model")
     defer h.Close()
     if err == nil {
       net.hiddenWeights.Reset()
