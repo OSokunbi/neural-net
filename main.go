@@ -1,3 +1,6 @@
+// special thanks to Chang Sau Sheong for the informative arctile
+// on building neural networks
+
 package main
 
 import (
