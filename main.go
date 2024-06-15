@@ -31,7 +31,7 @@ func main() {
 
 // loading the model would look like this {
 // func main() {
-//  net := CreateNetwork(2, 10, 1, 0.5)
+//  net := CreateNetwork(2, 5, 1, 0.5)
 //  nn.Load(&net)
 //  nn.MatrixPrint(net.Predict([]float64{0, 0}))
 //  nn.MatrixPrint(net.Predict([]float64{0, 1}))
