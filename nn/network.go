@@ -1,5 +1,5 @@
 package nn
- 
+
 import (
 	"encoding/gob"
 	"math/rand"
@@ -8,9 +8,9 @@ import (
 
 // Network represents the neural network with one hidden layer
 type Network struct {
-	InputSize   int
-	HiddenSize  int
-	OutputSize  int
+	InputSize    int
+	HiddenSize   int
+	OutputSize   int
 	LearningRate float64
 
 	// Weights and biases
@@ -116,7 +116,7 @@ func (net *Network) Train(input, target []float64) {
 			if dW1[j] == nil {
 				dW1[j] = make([]float64, net.HiddenSize)
 			}
-			dW1[j][i] = input[j] * dB1[i]
+			dW1[j][i] += input[j] * dB1[i]
 		}
 	}
 
@@ -173,6 +173,20 @@ func (net *Network) CalculateLoss(trainingData [][][]float64) float64 {
 	return totalLoss / float64(len(trainingData))
 }
 
+// CalculateLossBatch computes the Mean Squared Error over the training data (batch version)
+func (net *Network) CalculateLossBatch(inputs [][]float64, targets [][]float64) float64 {
+	totalLoss := 0.0
+	for idx, input := range inputs {
+		prediction := net.Predict(input)
+		for i := 0; i < net.OutputSize; i++ {
+			error := targets[idx][i] - prediction[i]
+			totalLoss += error * error
+		}
+	}
+	return totalLoss / float64(len(inputs))
+}
+
+// Initialize the gob encoder for serialization
 func init() {
 	gob.Register(&Network{})
 }
